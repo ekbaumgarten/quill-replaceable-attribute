@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Quill replaceable attribute</title>
+    <link href="https://cdn.quilljs.com/1.2.6/quill.bubble.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.2.6/quill.min.js"></script>
+</head>
+<body>
+    <div id="editor"></div>
+    <script>
+        // Quill.import('modules/replaceable-attribute');
+        var quill = new Quill("#editor", {
+            theme: 'bubble',
+            modules: {
+                'replaceable-attribute': {
+                    // attributesListContainerClass: 'teste-class',
+                    menus: [{
+                        title: 'Pedido',
+                        attributes: [{
+                            identifier: 'sale.id',
+                            title: 'Número'
+                        }, {
+                            identifier: 'sale.delivery.address',
+                            title: 'Endereço'
+                        }]
+                    }, {
+                        title: 'Dados da entrega',
+                        attributes: [{
+                            identifier: 'sale.id',
+                            title: 'Número'
+                        }, {
+                            identifier: 'sale.delivery.address',
+                            title: 'Endereço'
+                        }]
+                    }]
+                }
+            }
+        });
+
+        quill.on('text-change', function(delta, oldDelta, source) {
+            console.log('delta', delta);
+            console.log('oldDelta', oldDelta);
+            console.log('quill.getContents', quill.getContents());
+        })
+    </script>
+</body>
+</html>
