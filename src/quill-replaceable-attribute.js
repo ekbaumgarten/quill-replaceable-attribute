@@ -90,7 +90,7 @@ class ReplaceableAttribute {
         e.stopImmediatePropagation();
         e.preventDefault();
         this.quill.focus();
-        const range = quill.getSelection();
+        const range = this.quill.getSelection();
         const attribute = e.currentTarget;
         const tagPosition = range.index + range.length
         this.quill.insertEmbed(tagPosition, 'replaceableAttribute', {
