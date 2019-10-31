@@ -1,20 +1,25 @@
+import Quill from 'quill'
 const Embed = Quill.import('blots/embed')
 
 class ReplaceableAttributeBlot extends Embed {
+    constructor (scroll, domNode) {
+        super(scroll, domNode)
+    }
+
     static create (data) {
         const node = super.create()
-        const attributeContent = document.createElement('span')
-        attributeContent.innerHTML = data.title
-        attributeContent.contentEditable = false
-        node.innerHTML = ' '
-        node.appendChild(attributeContent)
-        node.innerHTML += ' '
-        // node.innerHTML += data.title
-        node.contentEditable = false
-        // console.log('node', node)
-        // console.log('data', data)
-        return ReplaceableAttributeBlot.setDataValues(node, data)
+        node.innerHTML = data.title
+        return this.setDataValues(node, data)
     }
+
+    //TBD
+    // static replace (element, data) {
+    //     // const node = super.create()
+    //     // element.appendChild()´
+    //     element.children[0].innerHTML += data.title
+    //     // console.log(element.children[])
+    //     return this.setDataValues(element, data)
+    // }
 
     static setDataValues (element, data) {
         const domNode = element

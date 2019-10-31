@@ -1,10 +1,15 @@
 import './blots/replaceable-attribute'
 import './styles.scss';
 
-class ReplaceableAttribute {
+import { getEventComposedPath } from './utils/helpers'
+
+const Module = Quill.import('core/module');
+// const Delta = Quill.import('delta')
+const ReplaceableAttributeBlot = Quill.import('formats/replaceableAttribute')
+
+class ReplaceableAttribute extends Module {
     constructor (quill, options) {
-        this.quill = quill;
-        this.options = {
+        let defaultOptions = {
             attributesMenuClass: 'ql-replaceable-attributes-menu',
             attributesMenuListClass: 'ql-replaceable-attributes-menu-list',
             attributesMenuListContainerClass: 'ql-replaceable-attributes-menu-list-container',
@@ -13,7 +18,8 @@ class ReplaceableAttribute {
             menus: null
         };
 
-        Object.assign(this.options, options);
+        Object.assign(defaultOptions, options);
+        super(quill, defaultOptions)
 
         this.menu = null;
         this.menuOpened = false;
@@ -37,17 +43,63 @@ class ReplaceableAttribute {
         
         this.closeMenuOnDocumentClick = this.closeMenuOnDocumentClick.bind(this);
         this.renderMenu(this.options.menus)
+        // this.replaceAttribute = null
+
+        // this.quill.container.addEventListener('click', (event) => {
+        //     //event.path is undefined in Safari, FF, Micro Edge
+        //     const path = getEventComposedPath(event)
+        //     const attributeNode = path.filter(node => {
+        //         return node.tagName &&
+        //             node.tagName.toUpperCase() === 'SPAN' &&
+        //             node.classList.contains('replaceable-attribute')
+        //     })[0]
+
+        //     if (attributeNode) {
+        //         this.handleAttributeClick(attributeNode, event)
+        //     }
+        // }, false)
+
+    }
+
+    // listenAttribute(attribute) {
+    //     const onAttributeClick = this.onAttributeClick.bind(this)
+    //     this.quill.container
+    //         .querySelector('.replaceable-attribute[data-identifier="' + attribute.identifier + '"]')
+    //             .addEventListener('click', onAttributeClick)
+    // }
+
+    handleAttributeClick(attributeElement, event) {
+        let b = {
+            "title": 'Attr replace',
+            "identifier": 'replace.identifier',
+            "type": "attribute"
+        }
+
+        ReplaceableAttributeBlot.replace(attributeElement, b)
+        // a.replace(b)
+        // console.log(a.remove())
+        // let range = this.quill.getSelection(true)
+        // this.quill.focus()
+        // this.replaceAttribute = a
+        // this.openMenu()
+        // this.quill.updateContents (new Delta().retain(range.index - 1).delete(1))
+        // attributeElement.style.color = 'red'
+        // attributeElement.remove()
+        // this.quill.focus()
+        // console.log(range)
+    }
+
+    setAttributesMenuContainerPosition(range) {
+        const lineBounds = this.quill.getBounds(range);
+        this.attributesMenuContainer.style.display = 'block';
+        this.attributesMenuContainer.style.position = 'absolute';
+        this.attributesMenuContainer.style.top = lineBounds.top + 'px';
     }
 
     onEditorChange(eventType, range) {
-        if (range === null || eventType !== Quill.events.SELECTION_CHANGE) return;
-        
-        if (range.length === 0) {
-            const lineBounds = this.quill.getBounds(range);
-            this.attributesMenuContainer.style.display = 'block';
-            this.attributesMenuContainer.style.position = 'absolute';
-            this.attributesMenuContainer.style.top = lineBounds.top + 'px';
-        }
+        if (range === null || eventType !== Quill.events.SELECTION_CHANGE) return
+
+        this.setAttributesMenuContainerPosition(range)
     }
 
     listToggleButtonClick(e) {
@@ -81,42 +133,56 @@ class ReplaceableAttribute {
     }
 
     closeMenu() {
+        // this.replaceAttribute = null
         this.menuOpened = false
         this.attributesMenu.classList.remove( this.options.attributesMenuClass + '--opened' )
         document.removeEventListener('click', this.closeMenuOnDocumentClick, true)
     }
 
-    attributeClick(e) {
+    onMenuItemClick(e) {
         e.stopImmediatePropagation();
         e.preventDefault();
-        this.quill.focus();
-        const range = this.quill.getSelection();
-        const attribute = e.currentTarget;
-        const tagPosition = range.index + range.length
-        this.quill.insertEmbed(tagPosition, 'replaceableAttribute', {
-            identifier: attribute.getAttribute('data-identifier'),
-            title: attribute.getAttribute('data-title')
-        }, Quill.sources.USER)
-        
-        this.quill.insertText(tagPosition + 1, ' ', Quill.sources.USER)
-        this.quill.setSelection(tagPosition + 2, Quill.sources.USER)
+        // this.quill.focus();
+        // if (this.replaceAttribute) {
+        //     this.replaceAttribute.remove()
+        //     this.quill.update()
+        // }
+        const range = this.quill.getSelection(true);
+        const attributeElement = e.currentTarget;
+        let attribute = {}
+        Object.assign(attribute, attributeElement.dataset)
+
+        // const tagPosition = range.index + range.length
+        // console.log(ReplaceableAttributeBlot);
+        // let a = new ReplaceableAttributeBlot()
+        // console.log(a)
+        // if (this.replaceAttribute) {
+        //     this.replaceAttribute.remove()
+        //     // console.log(range)
+        //     // this.quill.updateContents(new Delta().retain(range.index - 1).delete(1))
+        // }
+        this.quill.deleteText(range.index, range.length)
+        this.quill.insertEmbed(range.index, 'replaceableAttribute', attribute, Quill.sources.USER)
+        // this.listenAttribute(attribute)
+        // this.quill.insertText(range.index + 1, ' ', Quill.sources.USER)
+        this.quill.setSelection(range.index + 1, Quill.sources.USER)
 
         this.closeMenu()
         // console.log(attribute.getAttribute('data-identifier'), attribute.getAttribute('data-title'))
     }
 
-    renderAttribute(attribute) {
+    renderMenuItem(attribute) {
         const element = document.createElement('li');
         element.innerText = attribute.title;
         element.setAttribute('data-identifier', attribute.identifier);
         element.setAttribute('data-title', attribute.title);
-        // element.data.attribute = attribute;
-        element.onclick = this.attributeClick.bind(this);
+        element.setAttribute('data-type', attribute.type || 'attribute');
+        element.onclick = this.onMenuItemClick.bind(this);
         
         return element;
     }
 
-    renderGroup(group) {
+    renderMenuGroup(group) {
         const element = document.createElement('div');
         element.className = this.options.attributesMenuListContainerClass
         const groupTitle = document.createElement('span');
@@ -127,7 +193,7 @@ class ReplaceableAttribute {
         attributesList.className = this.options.attributesMenuListClass
         for (let attribute of group.attributes) {
             attributesList.appendChild(
-                this.renderAttribute(attribute)
+                this.renderMenuItem(attribute)
             );
         }
         element.appendChild(groupTitle);
@@ -144,7 +210,7 @@ class ReplaceableAttribute {
 
         for (let group of data) {
             this.attributesMenu.appendChild(
-                this.renderGroup(group)
+                this.renderMenuGroup(group)
             );
         }
     }
