@@ -97,6 +97,7 @@ class ReplaceableAttribute extends Module {
     }
 
     onEditorChange(eventType, range) {
+        if (range === null) this.attributesMenuContainer.style.display = 'none';
         if (range === null || eventType !== Quill.events.SELECTION_CHANGE) return
 
         this.setAttributesMenuContainerPosition(range)

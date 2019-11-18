@@ -10,6 +10,9 @@ let config = {
     filename: 'quill-replaceable-attribute.min.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  externals: {
+    quill: 'Quill',
+  },
   plugins: [
     new CleanWebpackPlugin({
         cleanAfterEveryBuildPatterns: ['dist']
