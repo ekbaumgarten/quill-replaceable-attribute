@@ -118,9 +118,10 @@ class ReplaceableAttribute extends Module {
         this.menuOpened = true
         this.attributesMenu.classList.add( this.options.attributesMenuClass + '--opened' )
         this.setMenuPosition()
+        this.quill.container.classList.add( this.options.attributesMenuClass + '-opened' )
         document.addEventListener('click', this.closeMenuOnDocumentClick, true)
     }
-
+    
     setMenuPosition() {
         if (!this.menuOpened) return
         const menuRect = this.attributesMenu.getBoundingClientRect()
@@ -132,11 +133,12 @@ class ReplaceableAttribute extends Module {
         this.menuDirection = spaceBelow < 0 && spaceAbove > menuRect.height ? 'above' : 'below'
         this.attributesMenu.classList.add( this.options.attributesMenuClass + '--opened--' + this.menuDirection )
     }
-
+    
     closeMenu() {
         // this.replaceAttribute = null
         this.menuOpened = false
         this.attributesMenu.classList.remove( this.options.attributesMenuClass + '--opened' )
+        this.quill.container.classList.remove( this.options.attributesMenuClass + '-opened' )
         document.removeEventListener('click', this.closeMenuOnDocumentClick, true)
     }
 
