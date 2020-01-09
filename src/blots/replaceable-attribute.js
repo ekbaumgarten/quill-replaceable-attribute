@@ -8,7 +8,32 @@ class ReplaceableAttributeBlot extends Embed {
 
     static create (data) {
         const node = super.create()
-        node.innerHTML = data.title
+        const label = document.createElement('span')
+        const value = document.createElement('span')
+        if (data.label === undefined) {
+            data.label = data.title
+        }
+
+        label.innerHTML = data.label
+        label.setAttribute('contentEditable', true)
+        label.className = 'label'
+        label.addEventListener('keyup', (event) => {
+            const element = event.target
+            const text = element.innerText
+            node.dataset['label'] = text
+            if (text) {
+                element.classList.remove('empty')
+            } else {
+                element.classList.add('empty')
+            }
+        })
+        node.appendChild(label)
+
+        value.innerHTML = data.title
+        value.setAttribute('contentEditable', false)
+        value.className = 'value'
+        node.appendChild(value)
+        // console.log(super(firstChild))
         return this.setDataValues(node, data)
     }
 
