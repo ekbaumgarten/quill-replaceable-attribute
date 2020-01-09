@@ -1,6 +1,6 @@
 {
   "name": "quill-replaceable-attribute",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "QuillJS module for dynamic replaceable attributes",
   "main": "src/quill-replaceable-attribute.js",
   "repository": "https://github.com/ekbaumgarten/quill-replaceable-attribute.git",

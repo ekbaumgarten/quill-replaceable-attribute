@@ -16,22 +16,22 @@ class ReplaceableAttributeBlot extends Embed {
 
         label.innerHTML = data.label
         label.setAttribute('contentEditable', true)
-        label.className = 'label'
+        label.className = node.className + '-label'
         label.addEventListener('keyup', (event) => {
             const element = event.target
             const text = element.innerText
             node.dataset['label'] = text
             if (text) {
-                element.classList.remove('empty')
+                element.classList.remove(label.className + '-empty')
             } else {
-                element.classList.add('empty')
+                element.classList.add(label.className + '-empty')
             }
         })
         node.appendChild(label)
 
         value.innerHTML = data.title
         value.setAttribute('contentEditable', false)
-        value.className = 'value'
+        value.className = node.className + '-value'
         node.appendChild(value)
         // console.log(super(firstChild))
         return this.setDataValues(node, data)
