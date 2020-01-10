@@ -2,36 +2,43 @@ import Quill from 'quill'
 const Embed = Quill.import('blots/embed')
 
 class ReplaceableAttributeBlot extends Embed {
-    constructor (scroll, domNode) {
-        super(scroll, domNode)
+    constructor (blot) {
+        super(blot)
     }
 
     static create (data) {
         const node = super.create()
         const label = document.createElement('span')
         const value = document.createElement('span')
+        
         if (data.label === undefined) {
             data.label = data.title
         }
 
         label.innerHTML = data.label
         label.setAttribute('contentEditable', true)
-        label.className = node.className + '-label'
+        label.className = 'replaceable-attribute-label'
+        label.addEventListener('keydown', (event) => {
+            if (event.key.toLowerCase() === 'enter') {
+                event.preventDefault()
+                return false
+            }
+        })
         label.addEventListener('keyup', (event) => {
             const element = event.target
             const text = element.innerText
             node.dataset['label'] = text
             if (text) {
-                element.classList.remove(label.className + '-empty')
+                element.classList.remove('replaceable-attribute-label-empty')
             } else {
-                element.classList.add(label.className + '-empty')
+                element.classList.add('replaceable-attribute-label-empty')
             }
         })
         node.appendChild(label)
 
         value.innerHTML = data.title
         value.setAttribute('contentEditable', false)
-        value.className = node.className + '-value'
+        value.className = 'replaceable-attribute-value'
         node.appendChild(value)
         // console.log(super(firstChild))
         return this.setDataValues(node, data)
