@@ -45,6 +45,36 @@ class ReplaceableAttribute extends Module {
         this.renderMenu(this.options.menus)
         // this.replaceAttribute = null
 
+        this.quill.container.addEventListener('dblclick', (event) => {
+            const attributeNode = this.getTargetNode(event)
+            
+            if (attributeNode) {
+                const attributeBlot = Quill.find(attributeNode)
+                const index = this.quill.getIndex(attributeBlot)
+                this.quill.setSelection(index, 1, 'user')
+                this.quill.theme.tooltip.show()
+            }
+        }, false)
+
+        this.quill.container.addEventListener('mouseup', ( ) => {
+            if (
+                event.target.classList.contains('replaceable-attribute-label') || 
+                event.target.classList.contains('replaceable-attribute-value')
+            ){
+                return
+            }
+            const attributeNode = this.getTargetNode(event)
+            const selection = this.quill.getSelection()
+            const documentSelection = document.getSelection()
+            if (
+                documentSelection.type === 'Range' && 
+                documentSelection.rangeCount > 0 && 
+                selection.length === 0
+            ) {
+                this.quill.setSelection(selection.index, 1, 'user')
+            }
+        }, false)
+        
         // this.quill.container.addEventListener('click', (event) => {
         //     //event.path is undefined in Safari, FF, Micro Edge
         //     const path = getEventComposedPath(event)
@@ -59,6 +89,16 @@ class ReplaceableAttribute extends Module {
         //     }
         // }, false)
 
+    }
+
+    getTargetNode(event) {
+        const path = getEventComposedPath(event)
+        const attributeNode = path.filter(node => {
+            return node.tagName &&
+                node.tagName.toUpperCase() === 'SPAN' &&
+                node.classList.contains('replaceable-attribute')
+        })[0];
+        return attributeNode
     }
 
     // listenAttribute(attribute) {

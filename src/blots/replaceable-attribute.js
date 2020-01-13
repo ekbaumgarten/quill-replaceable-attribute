@@ -36,6 +36,10 @@ class ReplaceableAttributeBlot extends Embed {
         })
         node.appendChild(label)
 
+        label.addEventListener('drop', (event) => {
+            event.preventDefault()
+        })
+
         value.innerHTML = data.title
         value.setAttribute('contentEditable', false)
         value.className = 'replaceable-attribute-value'
