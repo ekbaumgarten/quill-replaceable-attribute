@@ -10,10 +10,11 @@ class ReplaceableAttributeBlot extends Embed {
         const node = super.create()
         const label = document.createElement('span')
         const value = document.createElement('span')
-        
         if (data.label === undefined) {
             data.label = data.title
         }
+
+        data.label = data.label === null ? "" : data.label
 
         label.innerHTML = data.label
         label.setAttribute('contentEditable', true)
