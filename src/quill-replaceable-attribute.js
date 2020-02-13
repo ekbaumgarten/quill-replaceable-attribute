@@ -177,6 +177,7 @@ class ReplaceableAttribute extends Module {
     closeMenu() {
         // this.replaceAttribute = null
         this.menuOpened = false
+        this.attributesMenu.classList.remove( this.options.attributesMenuClass + '--opened--' + this.menuDirection )
         this.attributesMenu.classList.remove( this.options.attributesMenuClass + '--opened' )
         this.quill.container.classList.remove( this.options.attributesMenuClass + '-opened' )
         document.removeEventListener('click', this.closeMenuOnDocumentClick, true)
