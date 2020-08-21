@@ -1,3 +1,4 @@
+import Quill from 'quill'
 import './blots/replaceable-attribute'
 import './styles.scss';
 
