@@ -5,9 +5,14 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 
 let config = {
-  entry: './src/quill-replaceable-attribute.js',
+  entry: {
+    'quill-replaceable-attribute.min.js': ['./src/quill-replaceable-attribute.js', './src/styles.scss']
+  },
   output: {
-    filename: 'quill-replaceable-attribute.min.js',
+    filename: '[name]',
+    library: 'QuillReplaceableAttribute',
+    libraryExport: 'default',
+    libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
   },
   externals: {
